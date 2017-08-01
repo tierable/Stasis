@@ -1,0 +1,4 @@
+include ':stasis-lib'
+include ':stasis-lib-android'
+include ':stasis-compiler'
+include ':app'

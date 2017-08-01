@@ -1,0 +1,16 @@
+ext {
+    stasisVersion = '0.1.0'
+
+    stasisSourceCompatibility = JavaVersion.VERSION_1_7
+
+    stasisMinSdkVersion = 16
+    stasisCompileSdkVersion = 25
+    stasisTargetSdkVersion = 25
+
+    androidGradlePluginVersion = '2.3.3'
+    stasisBuildToolsVersion = '26.0.0'
+
+    supportLibVersion = "$stasisCompileSdkVersion.3.0"
+
+    javaPoetVersion = '1.9.0'
+}

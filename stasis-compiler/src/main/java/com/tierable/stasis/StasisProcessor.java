@@ -200,7 +200,7 @@ public class StasisProcessor
                         (TypeElement) defaultPreservationConfigurations.iterator().next();
 
                 if (!SuperficialValidation.validateElement(preservationConfigurationElement)) {
-                    // TODO boom
+                    throw new RuntimeException("Could not properly validate mapping class");
                 }
 
                 if (ElementKind.INTERFACE.equals(preservationConfigurationElement.getKind())) {
@@ -261,10 +261,7 @@ public class StasisProcessor
                     TypeName preservationStrategy;
                     try {
                         elementAnnotation.value();
-                        throw new NullPointerException(
-                                // TODO message
-                                "stuff went boom"
-                        );
+                        throw new NullPointerException();
                     } catch (MirroredTypeException e) {
                         TypeName annotatedPreservationStrategy = TypeName.get(e.getTypeMirror());
 

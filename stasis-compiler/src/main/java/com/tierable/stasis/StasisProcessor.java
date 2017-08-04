@@ -31,9 +31,13 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic.Kind;
 
 import static com.google.auto.common.MoreElements.getPackage;
@@ -47,7 +51,7 @@ import static com.google.auto.common.MoreElements.getPackage;
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class StasisProcessor
         extends AbstractProcessor {
-    private static final boolean IS_TEST = true;
+    private static final boolean IS_TEST = false;
 
     public static final String PACKAGE_STASIS = "com.tierable.stasis";
 
@@ -64,6 +68,7 @@ public class StasisProcessor
 
     private Filer    filer;
     private Elements elementUtils;
+    private Types    typeUtils;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -72,6 +77,7 @@ public class StasisProcessor
         this.filer = processingEnv.getFiler();
 
         elementUtils = processingEnv.getElementUtils();
+        typeUtils = processingEnv.getTypeUtils();
     }
 
     @Override
@@ -95,17 +101,27 @@ public class StasisProcessor
 
 
     private Map<TypeName, TypeName> getDefaultStrategies(TypeElement element) {
+        final TypeMirror preservationStrategyType = elementUtils.getTypeElement(
+                CLASS_NAME_STASIS_PRESERVATION_STRATEGY.toString()
+        ).asType();
+
+
         Map<TypeName, TypeName> defaultStrategies = new HashMap<>();
 
         List<ExecutableElement> methods = getMethodsFromInterface(element);
 
         for (ExecutableElement method : methods) {
-            TypeName returnTypeName = TypeName.get(method.getReturnType());
+            TypeMirror returnType = method.getReturnType();
 
-//elementUtils.getTypeElement(CLASS_NAME_STASIS_PRESERVATION_STRATEGY.toString()).asType()
-            // TODO: must return a StasisPreservationStrategy
-//            Type.isAssignableFrom(returnTypeName, PRESERVATION_STRATEGY);
+            if (!isAssignable(returnType, preservationStrategyType)) {
+                throw new IllegalStateException(
+                        String.format("For %s.%s, mapping method must return a %s", element, method,
+                                      CLASS_NAME_STASIS_PRESERVATION_STRATEGY.simpleName()
+                        )
+                );
+            }
 
+            TypeName returnTypeName = TypeName.get(returnType);
             List<? extends VariableElement> parameters = method.getParameters();
             for (VariableElement parameter : parameters) {
                 TypeName paramTypeName = TypeName.get(parameter.asType());
@@ -115,6 +131,32 @@ public class StasisProcessor
 
         return defaultStrategies;
     }
+
+    private boolean isAssignable(TypeMirror tested, TypeMirror from) {
+        if (typeUtils.isAssignable(typeUtils.erasure(tested), typeUtils.erasure(from))) {
+            return true;
+        } else {
+            if (tested.getKind().equals(TypeKind.DECLARED)) {
+                DeclaredType declaredType = (DeclaredType) tested;
+
+                TypeElement element = (TypeElement) declaredType.asElement();
+
+                List<TypeMirror> checkedTypes = new ArrayList<>();
+
+                checkedTypes.add(element.getSuperclass());
+                checkedTypes.addAll(element.getInterfaces());
+
+                for (TypeMirror checkedType : checkedTypes) {
+                    if (isAssignable(checkedType, from)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
+
 
     private List<ExecutableElement> getMethodsFromInterface(TypeElement element) {
         List<? extends Element> objectMembers = elementUtils.getAllMembers(

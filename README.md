@@ -1,32 +1,32 @@
 # Stasis
-
-Stasis is a general purpose library to persist state. Stasis uses an annotation processing and code generation mechanism to create classes that help preserve the state of its intended target.
+Stasis is a general purpose library to persist state using annotation processing and code generation.
 
 
 ## The (Android) problem
 Android user interface classes (`Activity`s, `Fragment`s, etc) provide a (limited) mechanism to save important bits of the UI state (the `onSavedInstanceState(Bundle)` and `onRestoreInstanceState(Bundle)` mechanism).
 However, in practice this is not comprehensive enough to fully restore the UI.
-There's not commonly known flags (like `freezesText` for `TextView`s) or certain bits of state that cannot be properly saved using a `Bundle`.
+There's flags that aren't commonly known (like `freezesText` for `TextView`s), information that can't normally be accessed, or information that is not appropriately stored in a `Bundle`.
 
-Stasis provides a general purpose mechanism to persist state.
-The library provides an Android library that can be plugged into projects with ease.
-
+Stasis provides an Android specialisation with sensible defaults for UI state preservation.
 
 ## Usage
 Stasis uses a similar approach to [Jake Wharton's ButterKnife](https://github.com/JakeWharton/butterknife) library. 
-Just annotate the relevant fields with the `@StasisPreserve` annotation and the code generation creates a class for you.
+In a class you'd like to preserve, just annotate the relevant fields with the `@StasisPreserve` annotation and the annotation processor generates a `StasisPreservationStrategy` for your class.
 
+### Dependencies
+TODO: coming soon!
 
 ### Providing a mapping class
-Provide a *single* interface (for now?) in your project and mark it with the `StasisPreservationMapping` annotation.
+Provide a *single* interface (for now?) in your module and mark it with the `@StasisPreservationMapping` annotation.
+You can define a fallback strategy if you don't want to define a mapping for every type of preserved class.
+The default fallback strategy is to not save anything.
 
 The mapping interface can extend other interfaces.
-
-Methods:
+Methods in the interface:
 
 * Can be named whatever you desire (as long as it makes sense)
 * Must return a `StatisPreservationStrategy`
-* Can have multiple parameters
+* Can have more than one parameter if you need the same `StatisPreservationStrategy` for multiple types
 
 ```Java
 // Uses the marker annotation
@@ -45,6 +45,11 @@ public interface DemoMapping
 
 
 ### Preserving state
+
+Stasis generates a `StasisPreservationStrategy` for every class with the `StasisPreserve` annotation.
+The generated class names will be in the format `StasisPreservationStrategy[YourClassNameHere]` and will be present in the same package.
+Preserved fields must be either public or package private so they are accessible by the generated code.
+
 
 ```Java
 
@@ -77,7 +82,7 @@ public class DemoClass {
 	}
 	
 	public void restoreState() {
-		// Restore the preservationStrategy from somewhere
+		// TODO: Restore the preservationStrategy from somewhere
 		
 		// 'UnFreeze'/'restore' this classes state
 		preservationStrategy.unFreeze(this);

@@ -31,9 +31,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
@@ -70,6 +68,8 @@ public class StasisProcessor
     private Elements elementUtils;
     private Types    typeUtils;
 
+
+    //region Initialisation boilerplate
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
@@ -89,7 +89,6 @@ public class StasisProcessor
         return types;
     }
 
-
     private Set<Class<? extends Annotation>> getSupportedAnnotations() {
         Set<Class<? extends Annotation>> annotations = new LinkedHashSet<>();
 
@@ -98,8 +97,15 @@ public class StasisProcessor
 
         return annotations;
     }
+    //endregion
 
 
+    //region Default strategy and stasis processor configuration
+
+    /**
+     * @return A map where the keys are the preserved types, and the values are the corresponding
+     * {@link StasisPreservationStrategy}
+     */
     private Map<TypeName, TypeName> getDefaultStrategies(TypeElement element) {
         final TypeMirror preservationStrategyType = elementUtils.getTypeElement(
                 CLASS_NAME_STASIS_PRESERVATION_STRATEGY.toString()
@@ -113,7 +119,7 @@ public class StasisProcessor
         for (ExecutableElement method : methods) {
             TypeMirror returnType = method.getReturnType();
 
-            if (!isAssignable(returnType, preservationStrategyType)) {
+            if (!isAssignableWithErasure(returnType, preservationStrategyType)) {
                 throw new IllegalStateException(
                         String.format("For %s.%s, mapping method must return a %s", element, method,
                                       CLASS_NAME_STASIS_PRESERVATION_STRATEGY.simpleName()
@@ -132,43 +138,22 @@ public class StasisProcessor
         return defaultStrategies;
     }
 
-    private boolean isAssignable(TypeMirror tested, TypeMirror from) {
-        if (typeUtils.isAssignable(typeUtils.erasure(tested), typeUtils.erasure(from))) {
-            return true;
-        } else {
-            if (tested.getKind().equals(TypeKind.DECLARED)) {
-                DeclaredType declaredType = (DeclaredType) tested;
-
-                TypeElement element = (TypeElement) declaredType.asElement();
-
-                List<TypeMirror> checkedTypes = new ArrayList<>();
-
-                checkedTypes.add(element.getSuperclass());
-                checkedTypes.addAll(element.getInterfaces());
-
-                for (TypeMirror checkedType : checkedTypes) {
-                    if (isAssignable(checkedType, from)) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
+    private boolean isAssignableWithErasure(TypeMirror tested, TypeMirror from) {
+        return typeUtils.isAssignable(typeUtils.erasure(tested), typeUtils.erasure(from));
     }
 
 
     private List<ExecutableElement> getMethodsFromInterface(TypeElement element) {
-        List<? extends Element> objectMembers = elementUtils.getAllMembers(
+        List<? extends Element> membersFromObject = elementUtils.getAllMembers(
                 elementUtils.getTypeElement(CLASS_NAME_OBJECT.toString())
         );
-        List<? extends Element> allMembers = new ArrayList<>(
+        List<? extends Element> membersFromElement = new ArrayList<>(
                 elementUtils.getAllMembers(element)
         );
 
-        allMembers.removeAll(objectMembers);
+        membersFromElement.removeAll(membersFromObject);
 
-        return ElementFilter.methodsIn(allMembers);
+        return ElementFilter.methodsIn(membersFromElement);
     }
 
     private TypeName getFallbackPreservationStrategy(Element element) {
@@ -183,11 +168,11 @@ public class StasisProcessor
         }
         throw new NullPointerException("No fallback strategy defined.");
     }
+    //endregion
+
 
     @Override
     public boolean process(Set<? extends TypeElement> elements, RoundEnvironment env) {
-//        env.
-
         Set<? extends Element> defaultPreservationConfigurations = env.getElementsAnnotatedWith(
                 StasisPreservationMapping.class
         );
@@ -270,26 +255,11 @@ public class StasisProcessor
                             TypeName elementTypeTypeName = TypeName.get(element.asType());
                             preservationStrategy = defaultStrategies.get(elementTypeTypeName);
 
-                            if (preservationStrategy != null) {
-                                if (IS_TEST) {
-//                                    note(element, "For %s, using default strategy %s", element,
-//                                         preservationStrategy);
-                                }
-                            } else {
+                            if (preservationStrategy == null) {
                                 preservationStrategy = fallbackPreservationStrategy;
-                                if (IS_TEST) {
-//                                    note(element, "For %s, default strategy not defined. " +
-//                                                 "Using fallback preservation strategy %s", element,
-//                                         preservationStrategy);
-                                }
                             }
                         } else {
                             preservationStrategy = annotatedPreservationStrategy;
-
-//                            if (IS_TEST) {
-//                                note(element, "For %s, using annotated preservation strategy %s",
-//                                     preservationStrategy);
-//                            }
                         }
                     }
 
@@ -331,9 +301,8 @@ public class StasisProcessor
                 System.out.println("preservedMembers: " + preservedMembers);
             }
 
-            TypeSpec.Builder generatedClassBuilder =
-                    TypeSpec.classBuilder(generatedClassName)
-                            .addModifiers(Modifier.PUBLIC);
+            TypeSpec.Builder generatedClassBuilder = TypeSpec.classBuilder(generatedClassName)
+                                                             .addModifiers(Modifier.PUBLIC);
 
             new StatisPreservationStrategyClassBuilder(generatedClassBuilder,
                                                        classForPreservationClassName,
@@ -363,12 +332,15 @@ public class StasisProcessor
         return false;
     }
 
-    public static TypeElement findEnclosingTypeElement(Element e) {
+
+    //region Util
+    private static TypeElement findEnclosingTypeElement(Element e) {
         while (e != null && !(e instanceof TypeElement)) {
             e = e.getEnclosingElement();
         }
         return TypeElement.class.cast(e);
     }
+    //endregion
 
 
     //region Logging

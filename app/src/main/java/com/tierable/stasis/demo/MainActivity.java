@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tierable.stasis.StasisPreserve;
@@ -18,16 +19,17 @@ public class MainActivity
 
 
     @StasisPreserve
-    TextView textView;
+    TextView     textView;
     @StasisPreserve
-    CheckBox checkBox;
+    CheckBox     checkBox;
     @StasisPreserve
-    Button   button;
-
+    Button       button;
     @StasisPreserve(ButtonCustomStasisPreservationStrategy.class)
     Button       button2;
     @StasisPreserve
     RecyclerView recyclerView;
+    @StasisPreserve
+    ListView     listView;
 
     @Nullable
     private StasisPreservationStrategyMainActivity preservationStrategy;

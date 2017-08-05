@@ -114,6 +114,7 @@ public class StasisProcessor
 
         Map<TypeName, TypeName> defaultStrategies = new HashMap<>();
 
+        // Method ordering ... should be ... parent classes first
         List<ExecutableElement> methods = getMethodsFromInterface(element);
 
         for (ExecutableElement method : methods) {

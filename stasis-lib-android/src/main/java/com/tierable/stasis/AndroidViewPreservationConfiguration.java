@@ -21,17 +21,14 @@ import android.widget.ToggleButton;
 
 
 /**
+ * Sensible defaults for Android. Extend this interface in your own if required.
+ *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */
-//@StasisPreservationMapping(StasisPreservationStrategyView.class)
 public interface AndroidViewPreservationConfiguration {
     StasisPreservationStrategyAdapterView getStrategy(
-            AdapterView adapterView
-    );
-
-    StasisPreservationStrategyListView getStrategy(
-            ListView listView, ExpandableListView expandableListView
+            AdapterView adapterView, ListView listView, ExpandableListView expandableListView
     );
 
     StasisPreservationStrategyCompoundButton getStrategy(

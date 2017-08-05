@@ -1,10 +1,12 @@
 package com.tierable.stasis;
 
 
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatRadioButton;
+import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.widget.AdapterView;
@@ -16,6 +18,7 @@ import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -26,25 +29,31 @@ import android.widget.ToggleButton;
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */
-public interface AndroidViewPreservationConfiguration {
-    StasisPreservationStrategyAdapterView getStrategy(
-            AdapterView adapterView, ListView listView, ExpandableListView expandableListView
+public interface AndroidStasisPreservationMapping {
+    StasisPreservationStrategyTextView getStrategy(
+            TextView textView, AppCompatTextView appCompatTextView, EditText editText,
+            AppCompatEditText appCompatEditText, Button button, AppCompatButton appCompatButton
     );
 
     StasisPreservationStrategyCompoundButton getStrategy(
             CompoundButton compoundButton, CheckBox checkBox, AppCompatCheckBox appCompatCheckBox,
-            ToggleButton toggleButton, RadioButton radioButton,
-            AppCompatRadioButton appCompatRadioButton
+            ToggleButton toggleButton, RadioButton radioButton, AppCompatRadioButton appCompatRadioButton
+    );
+
+    StasisPreservationStrategyTextInputLayout getStrategy(
+            TextInputLayout textInputLayout
+    );
+
+
+    StasisPreservationStrategyAdapterView getStrategy(
+            AdapterView adapterView, ListView listView, ExpandableListView expandableListView, Spinner spinner,
+            AppCompatSpinner appCompatSpinner
     );
 
     StasisPreservationStrategyRecyclerView getStrategy(
             RecyclerView recyclerView
     );
 
-    StasisPreservationStrategyTextView getStrategy(
-            TextView textView, AppCompatTextView appCompatTextView, EditText editText,
-            AppCompatEditText appCompatEditText, Button button, AppCompatButton appCompatButton
-    );
 
     StasisPreservationStrategyProgressBar getStrategy(
             ProgressBar ProgressBar

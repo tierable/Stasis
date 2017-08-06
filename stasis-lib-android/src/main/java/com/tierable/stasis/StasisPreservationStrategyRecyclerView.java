@@ -13,7 +13,6 @@ import android.support.v7.widget.RecyclerView.LayoutManager;
  */
 public class StasisPreservationStrategyRecyclerView
         extends StasisPreservationStrategyView<RecyclerView> {
-    private LayoutManager        layoutManager;
     private RecyclerView.Adapter adapter;
     private int                  firstVisibleItemPosition;
 
@@ -22,7 +21,7 @@ public class StasisPreservationStrategyRecyclerView
     public void freeze(RecyclerView preserved) {
         super.freeze(preserved);
 
-        layoutManager = preserved.getLayoutManager();
+        LayoutManager layoutManager = preserved.getLayoutManager();
         adapter = preserved.getAdapter();
         if (layoutManager instanceof GridLayoutManager) {
             firstVisibleItemPosition = ((GridLayoutManager) layoutManager).findFirstVisibleItemPosition();
@@ -35,8 +34,8 @@ public class StasisPreservationStrategyRecyclerView
     public void unFreeze(RecyclerView preserved) {
         super.unFreeze(preserved);
 
-        preserved.setLayoutManager(layoutManager);
         preserved.setAdapter(adapter);
+        LayoutManager layoutManager = preserved.getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {
             preserved.scrollToPosition(firstVisibleItemPosition);
         } else if (layoutManager instanceof LinearLayoutManager) {
@@ -48,8 +47,7 @@ public class StasisPreservationStrategyRecyclerView
     @Override
     public String toString() {
         return "StasisPreservationStrategyRecyclerView{" +
-                "layoutManager=" + layoutManager +
-                ", adapter=" + adapter +
+                "adapter=" + adapter +
                 ", firstVisibleItemPosition=" + firstVisibleItemPosition +
                 "} " + super.toString();
     }

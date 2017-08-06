@@ -63,6 +63,7 @@ public class StasisProcessor
     public static final ClassName CLASS_NAME_STASIS_PRESERVATION_STRATEGY_AUTO_RESOLVE = ClassName.get(
             PACKAGE_STASIS, "StasisPreservationStrategyAutoResolve"
     );
+    public static final String    ANNOTATION_NAME_NULLABLE                             = "Nullable";
 
     private Filer    filer;
     private Elements elementUtils;

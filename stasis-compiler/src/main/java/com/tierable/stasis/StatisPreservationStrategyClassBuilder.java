@@ -11,12 +11,16 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.Name;
 
+import static com.tierable.stasis.StasisProcessor.ANNOTATION_NAME_NULLABLE;
 import static com.tierable.stasis.StasisProcessor.CLASS_NAME_STASIS_PRESERVATION_STRATEGY;
 
 
@@ -36,7 +40,10 @@ public class StatisPreservationStrategyClassBuilder {
     private final Map<Element, TypeName> memberPreservationStrategies;
 
 
-    public StatisPreservationStrategyClassBuilder(Builder generatedClassBuilder, ClassName classForPreservationClassName, Set<Element> preservedMembers, Map<Element, TypeName> memberPreservationStrategies) {
+    public StatisPreservationStrategyClassBuilder(Builder generatedClassBuilder,
+                                                  ClassName classForPreservationClassName,
+                                                  Set<Element> preservedMembers,
+                                                  Map<Element, TypeName> memberPreservationStrategies) {
         this.generatedClassBuilder = generatedClassBuilder;
         this.classForPreservationClassName = classForPreservationClassName;
         this.preservedMembers = preservedMembers;
@@ -83,29 +90,37 @@ public class StatisPreservationStrategyClassBuilder {
                     preservedMember
             );
 
-            freezeCodeBuilder.add(
-                    CodeBlock.builder()
-                             .addStatement("$L.$L($L.$L)", fieldNameFieldPreservationStrategy,
+            boolean memberIsNullable = isNullable(preservedMember);
+
+            if (memberIsNullable) {
+                freezeCodeBuilder.beginControlFlow("if ($L.$L != null)", PARAMETER_NAME_PRESERVED,
+                                                   preservedMember);
+                unFreezeCodeBuilder.beginControlFlow("if ($L.$L != null)", PARAMETER_NAME_PRESERVED,
+                                                     preservedMember);
+            }
+
+            freezeCodeBuilder.addStatement("$L.$L($L.$L)", fieldNameFieldPreservationStrategy,
                                            METHOD_NAME_FREEZE, PARAMETER_NAME_PRESERVED,
-                                           preservedMember)
-                             .build()
-            );
-            unFreezeCodeBuilder.add(
-                    CodeBlock.builder()
-                             .addStatement("$L.$L($L.$L)", fieldNameFieldPreservationStrategy,
-                                           METHOD_NAME_UN_FREEZE, PARAMETER_NAME_PRESERVED,
-                                           preservedMember)
-                             .build()
-            );
+                                           preservedMember);
+            unFreezeCodeBuilder.addStatement("$L.$L($L.$L)", fieldNameFieldPreservationStrategy,
+                                             METHOD_NAME_UN_FREEZE, PARAMETER_NAME_PRESERVED,
+                                             preservedMember);
+
+            if (memberIsNullable) {
+                freezeCodeBuilder.endControlFlow();
+                unFreezeCodeBuilder.endControlFlow();
+            }
         }
 
         generatedClassBuilder.addMethod(
                 MethodSpec.methodBuilder(METHOD_NAME_FREEZE)
                           .addModifiers(Modifier.PUBLIC)
                           .addAnnotation(Override.class)
-                          .addParameter(ParameterSpec.builder(classForPreservationClassName,
-                                                              PARAMETER_NAME_PRESERVED)
-                                                     .build())
+                          .addParameter(
+                                  ParameterSpec.builder(classForPreservationClassName,
+                                                        PARAMETER_NAME_PRESERVED)
+                                               .build()
+                          )
                           .addCode(freezeCodeBuilder.build())
                           .build()
         );
@@ -114,14 +129,28 @@ public class StatisPreservationStrategyClassBuilder {
                 MethodSpec.methodBuilder(METHOD_NAME_UN_FREEZE)
                           .addModifiers(Modifier.PUBLIC)
                           .addAnnotation(Override.class)
-                          .addParameter(ParameterSpec.builder(classForPreservationClassName,
-                                                              PARAMETER_NAME_PRESERVED)
-                                                     .build())
+                          .addParameter(
+                                  ParameterSpec.builder(classForPreservationClassName,
+                                                        PARAMETER_NAME_PRESERVED)
+                                               .build()
+                          )
                           .addCode(unFreezeCodeBuilder.build())
                           .build()
         );
 
         return this;
+    }
+
+    private boolean isNullable(Element element) {
+        List<? extends AnnotationMirror> annotationMirrors = element.getAnnotationMirrors();
+        for (AnnotationMirror annotationMirror : annotationMirrors) {
+            Name annotationName = annotationMirror.getAnnotationType().asElement().getSimpleName();
+            if (ANNOTATION_NAME_NULLABLE.equalsIgnoreCase(annotationName.toString())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 

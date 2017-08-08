@@ -37,17 +37,17 @@ public class StatisPreservationStrategyClassBuilder {
     private final TypeSpec.Builder       generatedClassBuilder;
     private final ClassName              classForPreservationClassName;
     private final Set<Element>           preservedMembers;
-    private final Map<Element, TypeName> memberPreservationStrategies;
+    private final Map<Element, TypeName> preservationStrategiesForClass;
 
 
     public StatisPreservationStrategyClassBuilder(Builder generatedClassBuilder,
                                                   ClassName classForPreservationClassName,
                                                   Set<Element> preservedMembers,
-                                                  Map<Element, TypeName> memberPreservationStrategies) {
+                                                  Map<Element, TypeName> preservationStrategiesForClass) {
         this.generatedClassBuilder = generatedClassBuilder;
         this.classForPreservationClassName = classForPreservationClassName;
         this.preservedMembers = preservedMembers;
-        this.memberPreservationStrategies = memberPreservationStrategies;
+        this.preservationStrategiesForClass = preservationStrategiesForClass;
     }
 
 
@@ -64,7 +64,7 @@ public class StatisPreservationStrategyClassBuilder {
 
     public StatisPreservationStrategyClassBuilder applyFields() {
         for (Element preservedMember : preservedMembers) {
-            TypeName preservationStrategy = memberPreservationStrategies.get(preservedMember);
+            TypeName preservationStrategy = preservationStrategiesForClass.get(preservedMember);
 
             String fieldNameFieldPreservationStrategy = getFieldNameForPreservationStrategy(
                     preservedMember

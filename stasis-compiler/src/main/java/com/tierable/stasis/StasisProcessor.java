@@ -172,37 +172,54 @@ public class StasisProcessor
     }
     //endregion
 
-
     @Override
     public boolean process(Set<? extends TypeElement> elements, RoundEnvironment env) {
+        Set<? extends Element> annotatedElements = env.getElementsAnnotatedWith(
+                StasisPreserve.class
+        );
+        if (annotatedElements.isEmpty()) {
+            // Early exit if there are no elements, or if this is another annotation processing
+            // pass without any annotated elements remaining
+            return false;
+        }
+
+
         Set<? extends Element> defaultPreservationConfigurations = env.getElementsAnnotatedWith(
                 StasisPreservationMapping.class
         );
 
-        TypeName fallbackPreservationStrategy = null;
-        Map<TypeName, TypeName> defaultStrategies = null;
+        TypeName fallbackPreservationStrategy;
+        Map<TypeName, TypeName> defaultStrategies;
         switch (defaultPreservationConfigurations.size()) {
             case 1:
-                TypeElement preservationConfigurationElement =
-                        (TypeElement) defaultPreservationConfigurations.iterator().next();
+                TypeElement preservationConfigurationElement = (TypeElement) defaultPreservationConfigurations
+                        .iterator()
+                        .next();
 
-                if (!SuperficialValidation.validateElement(preservationConfigurationElement)) {
-                    throw new RuntimeException("Could not properly validate mapping class");
-                }
-
-                if (ElementKind.INTERFACE.equals(preservationConfigurationElement.getKind())) {
-                    fallbackPreservationStrategy = getFallbackPreservationStrategy(
-                            preservationConfigurationElement);
-                    defaultStrategies = getDefaultStrategies(preservationConfigurationElement);
+                if (SuperficialValidation.validateElement(preservationConfigurationElement)) {
+                    if (ElementKind.INTERFACE.equals(preservationConfigurationElement.getKind())) {
+                        fallbackPreservationStrategy = getFallbackPreservationStrategy(
+                                preservationConfigurationElement
+                        );
+                        defaultStrategies = getDefaultStrategies(
+                                preservationConfigurationElement
+                        );
+                    } else {
+                        throw new RuntimeException(
+                                "StasisPreservationMapping must be an interface"
+                        );
+                    }
                 } else {
-                    throw new RuntimeException(
-                            "StasisPreservationMapping must be an interface"
-                    );
+                    error(preservationConfigurationElement, "%s is not a valid class",
+                          preservationConfigurationElement);
+
+                    return true;
                 }
                 break;
             case 0:
-//                throw new RuntimeException("No StasisPreservationMapping");
-                break;
+                throw new RuntimeException(
+                        "No StasisPreservationMapping"
+                );
             default:
                 throw new RuntimeException(
                         "Multiple StasisPreservationMapping's found. You can only define a single StasisPreservationMapping"
@@ -219,19 +236,31 @@ public class StasisProcessor
         Map<Element, Set<Element>> preservedMembersForClasses = new HashMap<>();
         Map<Element, TypeName> memberPreservationStrategies = new HashMap<>();
 
-        for (Element element : env.getElementsAnnotatedWith(StasisPreserve.class)) {
+
+        boolean hasErrorsPreProcessingElements = false;
+        for (Element element : annotatedElements) {
             if (!SuperficialValidation.validateElement(element)) {
+                // Skip invalid elements
                 continue;
             }
 
             if (ElementKind.FIELD.equals(element.getKind())) {
                 StasisPreserve elementAnnotation = element.getAnnotation(StasisPreserve.class);
 
+                Set<Modifier> modifiers = element.getModifiers();
+                if (modifiers.contains(Modifier.PRIVATE)) {
+                    error(element,
+                          "%s cannot be private as it cannot be accessed by generated code",
+                          element);
+                    hasErrorsPreProcessingElements = true;
+                    continue;
+                }
+
                 TypeElement classForPreservation = findEnclosingTypeElement(element);
                 if (ElementKind.CLASS.equals(classForPreservation.getKind())) {
                     classesForPreservation.add(classForPreservation);
 
-                    if (!elementAnnotation.enabled()) {
+                    if (!elementAnnotation.enabled()) { // Skip disabled annotations
                         continue;
                     }
 
@@ -245,10 +274,12 @@ public class StasisProcessor
                     preservedMembers.add(element);
 
 
+                    // TODO: split code
                     TypeName preservationStrategy;
                     try {
                         elementAnnotation.value();
-                        throw new NullPointerException();
+                        // Exception expected to be thrown here
+                        throw new NullPointerException("this shouldn't happen");
                     } catch (MirroredTypeException e) {
                         TypeName annotatedPreservationStrategy = TypeName.get(e.getTypeMirror());
 
@@ -268,6 +299,10 @@ public class StasisProcessor
                     memberPreservationStrategies.put(element, preservationStrategy);
                 }
             }
+        }
+
+        if (hasErrorsPreProcessingElements) {
+            return true;
         }
 
         if (IS_TEST) {
@@ -331,7 +366,7 @@ public class StasisProcessor
             }
         }
 
-        return false;
+        return true;
     }
 
 

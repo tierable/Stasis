@@ -6,6 +6,13 @@ import android.widget.AdapterView;
 
 
 /**
+ * Preserves and restores the
+ * <ul>
+ * <li>Adapter
+ * <li>Selected item position
+ * <li>State saved by {@link StasisPreservationStrategyView}
+ * </ul>
+ *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */

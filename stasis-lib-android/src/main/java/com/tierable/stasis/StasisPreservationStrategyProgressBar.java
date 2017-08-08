@@ -5,6 +5,13 @@ import android.widget.ProgressBar;
 
 
 /**
+ * Preserves and restores the
+ * <ul>
+ * <li>Max
+ * <li>Progress
+ * <li>State saved by {@link StasisPreservationStrategyView}
+ * </ul>
+ *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */

@@ -2,7 +2,7 @@ package com.tierable.stasis;
 
 
 /**
- * Don't save any state
+ * Don't preserve or restore any state
  *
  * @author Aniruddh Fichadia
  * @date 2017-07-27

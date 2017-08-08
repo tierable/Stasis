@@ -2,8 +2,8 @@ package com.tierable.stasis;
 
 
 /**
- * Marker class indicating that the StasisPreservationStrategy is automatically resolved using
- * the configured defaults
+ * Indicates that the {@link StasisPreservationStrategy} should be automatically resolved using
+ * the {@link StasisPreservationMapping}
  *
  * @author Aniruddh Fichadia
  * @date 2017-07-27

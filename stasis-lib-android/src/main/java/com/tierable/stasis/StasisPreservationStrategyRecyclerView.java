@@ -8,6 +8,16 @@ import android.support.v7.widget.RecyclerView.LayoutManager;
 
 
 /**
+ * Preserves and restores the
+ * <ul>
+ * <li>Adapter
+ * <li>First visible item position
+ * <li>State saved by {@link StasisPreservationStrategyView}
+ * </ul>
+ * <p>
+ * Note: Make sure {@link android.support.v7.widget.RecyclerView.AdapterDataObserver}'s are registered and
+ * deregistered appropriately
+ *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */

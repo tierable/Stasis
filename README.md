@@ -5,9 +5,10 @@ Stasis is a general purpose library to persist state using annotation processing
 ## The (Android) problem
 Android user interface classes (`Activity`s, `Fragment`s, etc) provide a (limited) mechanism to save important bits of the UI state (the `onSavedInstanceState(Bundle)` and `onRestoreInstanceState(Bundle)` mechanism).
 However, in practice this is not comprehensive enough to fully restore the UI.
-There's flags that aren't commonly known (like `freezesText` for `TextView`s), information that can't normally be accessed, or information that is not appropriately stored in a `Bundle`.
+There's flags that aren't commonly known by developers (like `freezesText` for `TextView`s), data that can't normally be accessed, or other things that can't be stored properly in a `Bundle` (like adapters, etc).
 
 Stasis provides an Android specialisation with sensible defaults for UI state preservation.
+
 
 ## Usage
 Stasis uses a similar approach to [Jake Wharton's ButterKnife](https://github.com/JakeWharton/butterknife) library. 
@@ -23,8 +24,8 @@ The default fallback strategy is to not save anything.
 
 The mapping interface can extend other interfaces.
 Methods in the interface:
-
-* Can be named whatever you desire (as long as it makes sense)
+* Can be named whatever you desire (as long as it makes sense). 
+The `getStrategy` name has been used in examples as an appropriate name though
 * Must return a `StatisPreservationStrategy`
 * Can have more than one parameter if you need the same `StatisPreservationStrategy` for multiple types
 
@@ -34,20 +35,23 @@ Methods in the interface:
 public interface DemoMapping 
 	extends AnotherMapping, YetAnotherMapping {
 	// Multiple mappings for a StasisPreservationStrategy
-	StasisPreservationStrategyButton getMapping(Button button, ButtonChildClass buttonChildClass);
+	StasisPreservationStrategyButton getStrategy(Button button, ButtonChildClass buttonChildClass);
 
 	// Single mapping for a StasisPreservationStrategy
-	StasisPreservationStrategyTextField getMapping(TextField textField);
+	StasisPreservationStrategyTextField getStrategy(TextField textField);
 
 	// etc
 }
 ```
 
+### Creating custom preservation strategies
+Just create a class implementing the `StasisPreservationStrategy` interface or extending a pre-existing `StasisPreservationStrategy`.
+The only limitation is that you can only use the default (no argument) constructor for generated code.
+
 
 ### Preserving state
-
-Stasis generates a `StasisPreservationStrategy` for every class with the `StasisPreserve` annotation.
-The generated class names will be in the format `StasisPreservationStrategy[YourClassNameHere]` and will be present in the same package.
+Stasis generates a `StasisPreservationStrategy` implementation for every class with atleast one member annotated with `@StasisPreserve`.
+The generated class names will be in the format `StasisPreservationStrategy[YourClassNameHere]` and will be outputted to the same package.
 Preserved fields must be either public or package private so they are accessible by the generated code.
 
 

@@ -9,6 +9,10 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
 
 
 /**
+ * Marks that the class provides the mapping of {@link StasisPreservationStrategy} to types.
+ * <p>
+ * This annotation is only valid for interfaces.
+ *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */

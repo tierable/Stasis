@@ -2,9 +2,18 @@ package com.tierable.stasis;
 
 
 import android.support.design.widget.TextInputLayout;
+import android.widget.EditText;
 
 
 /**
+ * Preserves and restores the
+ * <ul>
+ * <li>{@link EditText} using {@link StasisPreservationStrategyTextView}
+ * <li>Hint
+ * <li>Error
+ * <li>State saved by {@link StasisPreservationStrategyView}
+ * </ul>
+ *
  * @author Aniruddh Fichadia
  * @date 2017-08-05
  */
@@ -42,9 +51,9 @@ public class StasisPreservationStrategyTextInputLayout
     @Override
     public String toString() {
         return "StasisPreservationStrategyTextInputLayout{" +
-                "preservationStrategyEditText=" + preservationStrategyEditText +
-                ", hint=" + hint +
+                "hint=" + hint +
                 ", error=" + error +
+                ", preservationStrategyEditText=" + preservationStrategyEditText +
                 "} " + super.toString();
     }
 }

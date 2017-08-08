@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 
 /**
+ * Saves, retains, and restores the state of something
+ *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */

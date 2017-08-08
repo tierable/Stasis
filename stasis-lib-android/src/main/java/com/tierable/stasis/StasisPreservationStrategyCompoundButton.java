@@ -5,6 +5,12 @@ import android.widget.CompoundButton;
 
 
 /**
+ * Preserves and restores the
+ * <ul>
+ * <li>Checked state
+ * <li>State saved by {@link StasisPreservationStrategyView}
+ * </ul>
+ *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */

@@ -5,6 +5,14 @@ import android.view.View;
 
 
 /**
+ * Preserves and restores the
+ * <ul>
+ * <li>visibility
+ * <li>enabled
+ * <li>selected
+ * <li>contentDescription
+ * </ul>
+ *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */

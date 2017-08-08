@@ -24,7 +24,8 @@ import android.widget.ToggleButton;
 
 
 /**
- * Sensible defaults for Android. Extend this interface in your own if required.
+ * Sensible defaults for Android. Extend this interface in your {@link StasisPreservationMapping}
+ * if required.
  *
  * @author Aniruddh Fichadia
  * @date 2017-07-27

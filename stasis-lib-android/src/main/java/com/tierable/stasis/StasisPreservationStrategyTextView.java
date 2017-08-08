@@ -6,6 +6,13 @@ import android.widget.TextView;
 
 
 /**
+ * Preserves and restores the
+ * <ul>
+ * <li>Text
+ * <li>Selection info
+ * <li>State saved by {@link StasisPreservationStrategyView}
+ * </ul>
+ *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */

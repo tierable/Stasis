@@ -6,6 +6,7 @@ import com.squareup.javapoet.TypeName;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -85,17 +86,20 @@ public class StasisPreservationMappingConfiguration {
 
 
     public static class Extractor {
-        private final Elements elementUtils;
-        private final Types    typeUtils;
+        private final Elements                               elementUtils;
+        private final Types                                  typeUtils;
+        private final LinkedHashMap<Element, String>         errors;
+        private       StasisPreservationMappingConfiguration extractedConfiguration;
 
 
         public Extractor(Elements elementUtils, Types typeUtils) {
             this.elementUtils = elementUtils;
             this.typeUtils = typeUtils;
+            this.errors = new LinkedHashMap<>();
         }
 
 
-        public StasisPreservationMappingConfiguration extract(RoundEnvironment env)
+        public void extract(RoundEnvironment env)
                 throws RuntimeException {
             Set<? extends Element> defaultPreservationConfigurations = env.getElementsAnnotatedWith(
                     StasisPreservationMapping.class
@@ -118,36 +122,50 @@ public class StasisPreservationMappingConfiguration {
                             defaultStrategies = extractDefaultStrategies(
                                     preservationConfigurationElement
                             );
+
+                            extractedConfiguration = new StasisPreservationMappingConfiguration(
+                                    fallbackPreservationStrategy, defaultStrategies
+                            );
                         } else {
-                            throw new RuntimeException(
-                                    String.format(Locale.ENGLISH, "%s must be an interface",
-                                                  StasisPreservationMapping.class.getSimpleName())
+                            errors.put(
+                                    preservationConfigurationElement,
+                                    String.format(
+                                            Locale.ENGLISH, "%s must be an interface",
+                                            StasisPreservationMapping.class.getSimpleName()
+                                    )
                             );
                         }
                     } else {
-                        throw new RuntimeException(
-                                String.format(Locale.ENGLISH, "%s is not a valid class",
-                                              preservationConfigurationElement)
+                        errors.put(
+                                preservationConfigurationElement,
+                                String.format(
+                                        Locale.ENGLISH, "%s is not a valid class",
+                                        preservationConfigurationElement
+                                )
                         );
                     }
                     break;
                 case 0:
                     throw new RuntimeException(
-                            String.format(Locale.ENGLISH, "No %s",
-                                          StasisPreservationMapping.class.getSimpleName())
+                            String.format(
+                                    Locale.ENGLISH, "No %s found",
+                                    StasisPreservationMapping.class.getSimpleName()
+                            )
                     );
                 default: // Any other size
-                    throw new RuntimeException(
-                            String.format(Locale.ENGLISH,
-                                          "Multiple %s's found. You can only define a single %s",
-                                          StasisPreservationMapping.class.getSimpleName(),
-                                          StasisPreservationMapping.class.getSimpleName())
-                    );
-            }
+                    for (Element preservationConfigElement : defaultPreservationConfigurations) {
+                        errors.put(
+                                preservationConfigElement,
+                                String.format(
+                                        Locale.ENGLISH,
+                                        "Multiple %s's found. You can only define a single %s",
+                                        StasisPreservationMapping.class.getSimpleName(),
+                                        StasisPreservationMapping.class.getSimpleName()
+                                )
+                        );
+                    }
 
-            return new StasisPreservationMappingConfiguration(
-                    fallbackPreservationStrategy, defaultStrategies
-            );
+            }
         }
 
 
@@ -170,12 +188,14 @@ public class StasisPreservationMappingConfiguration {
                 TypeMirror returnType = method.getReturnType();
 
                 if (!isAssignableWithErasure(returnType, preservationStrategyType)) {
-                    throw new IllegalStateException(
-                            String.format("For %s.%s, mapping method must return a %s", element,
-                                          method,
-                                          CLASS_NAME_STASIS_PRESERVATION_STRATEGY.simpleName()
+                    errors.put(
+                            method,
+                            String.format(
+                                    Locale.ENGLISH, "Mapping method must return a %s",
+                                    CLASS_NAME_STASIS_PRESERVATION_STRATEGY.simpleName()
                             )
                     );
+                    continue;
                 }
 
                 TypeName returnTypeName = TypeName.get(returnType);
@@ -217,6 +237,19 @@ public class StasisPreservationMappingConfiguration {
                 return TypeName.get(e.getTypeMirror());
             }
             throw new NullPointerException("No fallback strategy defined.");
+        }
+
+
+        public boolean hasErrors() {
+            return !errors.isEmpty();
+        }
+
+        public LinkedHashMap<Element, String> getErrors() {
+            return errors;
+        }
+
+        public StasisPreservationMappingConfiguration getExtractedConfiguration() {
+            return extractedConfiguration;
         }
     }
 }

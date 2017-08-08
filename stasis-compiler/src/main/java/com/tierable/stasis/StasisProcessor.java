@@ -9,7 +9,6 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -104,27 +103,34 @@ public class StasisProcessor
 
 
         // Extract mapping configuration
-        StasisPreservationMappingConfiguration.Extractor mappingConfigurationExtractor = new StasisPreservationMappingConfiguration.Extractor(
+        StasisPreservationMappingConfiguration.Extractor mappingConfigExtractor = new StasisPreservationMappingConfiguration.Extractor(
                 elementUtils, typeUtils
         );
-        StasisPreservationMappingConfiguration stasisMappingConfiguration = mappingConfigurationExtractor
-                .extract(env);
-
-
-        // Extract processing configuration
-        StasisProcessingConfiguration.Extractor processingConfigurationExtractor = new StasisProcessingConfiguration.Extractor();
-        processingConfigurationExtractor.extract(stasisMappingConfiguration, annotatedElements);
-
-        if (processingConfigurationExtractor.hasErrors()) {
-            LinkedHashMap<Element, String> errors = processingConfigurationExtractor.getErrors();
-
-            for (Entry<Element, String> errorInfo : errors.entrySet()) {
+        mappingConfigExtractor.extract(env);
+        if (mappingConfigExtractor.hasErrors()) {
+            for (Entry<Element, String> errorInfo : mappingConfigExtractor.getErrors().entrySet()) {
                 error(errorInfo.getKey(), errorInfo.getValue());
             }
 
             return true;
         }
-        StasisProcessingConfiguration stasisProcessingConfiguration = processingConfigurationExtractor
+        StasisPreservationMappingConfiguration stasisMappingConfiguration = mappingConfigExtractor
+                .getExtractedConfiguration();
+
+
+        // Extract processing configuration
+        StasisProcessingConfiguration.Extractor processingConfigExtractor = new StasisProcessingConfiguration.Extractor();
+        processingConfigExtractor.extract(stasisMappingConfiguration, annotatedElements);
+
+        if (processingConfigExtractor.hasErrors()) {
+            for (Entry<Element, String> errorInfo : processingConfigExtractor.getErrors()
+                                                                             .entrySet()) {
+                error(errorInfo.getKey(), errorInfo.getValue());
+            }
+
+            return true;
+        }
+        StasisProcessingConfiguration stasisProcessingConfiguration = processingConfigExtractor
                 .getExtractedConfiguration();
 
 

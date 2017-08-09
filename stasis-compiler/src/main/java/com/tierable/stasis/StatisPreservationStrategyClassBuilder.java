@@ -20,7 +20,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 
-import static com.tierable.stasis.StasisProcessor.ANNOTATION_NAME_NULLABLE;
 import static com.tierable.stasis.StasisProcessor.CLASS_NAME_STASIS_PRESERVATION_STRATEGY;
 
 
@@ -29,6 +28,8 @@ import static com.tierable.stasis.StasisProcessor.CLASS_NAME_STASIS_PRESERVATION
  * @date 2017-07-30
  */
 public class StatisPreservationStrategyClassBuilder {
+    private static final String ANNOTATION_NAME_NULLABLE = "Nullable";
+
     private static final String PARAMETER_NAME_PRESERVED = "preserved";
     private static final String METHOD_NAME_FREEZE       = "freeze";
     private static final String METHOD_NAME_UN_FREEZE    = "unFreeze";

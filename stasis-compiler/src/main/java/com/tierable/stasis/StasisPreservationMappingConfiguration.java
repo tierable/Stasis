@@ -2,6 +2,7 @@ package com.tierable.stasis;
 
 
 import com.google.auto.common.SuperficialValidation;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 
 import java.util.ArrayList;
@@ -24,9 +25,7 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import static com.tierable.stasis.StasisProcessor.CLASS_NAME_OBJECT;
 import static com.tierable.stasis.StasisProcessor.CLASS_NAME_STASIS_PRESERVATION_STRATEGY;
-import static com.tierable.stasis.StasisProcessor.CLASS_NAME_STASIS_PRESERVATION_STRATEGY_AUTO_RESOLVE;
 
 
 /**
@@ -34,6 +33,13 @@ import static com.tierable.stasis.StasisProcessor.CLASS_NAME_STASIS_PRESERVATION
  * @date 2017-08-08
  */
 public class StasisPreservationMappingConfiguration {
+    private static final ClassName CLASS_NAME_STASIS_PRESERVATION_STRATEGY_AUTO_RESOLVE = ClassName.get(
+            StasisPreservationStrategyAutoResolve.class
+    );
+    private static final ClassName CLASS_NAME_OBJECT                                    = ClassName.get(
+            Object.class
+    );
+
     private final TypeName                fallbackPreservationStrategy;
     private final Map<TypeName, TypeName> defaultStrategies;
 

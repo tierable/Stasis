@@ -41,19 +41,10 @@ public class StasisProcessor
         extends AbstractProcessor {
     private static final boolean IS_TEST = false;
 
-
-    public static final String PACKAGE_STASIS = "com.tierable.stasis";
-
-    public static final ClassName CLASS_NAME_OBJECT                                    = ClassName.get(
-            "java.lang", "Object"
-    );
     public static final ClassName CLASS_NAME_STASIS_PRESERVATION_STRATEGY              = ClassName.get(
-            PACKAGE_STASIS, "StasisPreservationStrategy"
+            StasisPreservationStrategy.class
     );
-    public static final ClassName CLASS_NAME_STASIS_PRESERVATION_STRATEGY_AUTO_RESOLVE = ClassName.get(
-            PACKAGE_STASIS, "StasisPreservationStrategyAutoResolve"
-    );
-    public static final String    ANNOTATION_NAME_NULLABLE                             = "Nullable";
+
 
     private Filer    filer;
     private Elements elementUtils;

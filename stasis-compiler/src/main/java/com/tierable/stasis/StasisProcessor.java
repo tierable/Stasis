@@ -140,7 +140,6 @@ public class StasisProcessor
                                                .toString()
                                                .substring(packageName.length() + 1);
 
-            ClassName classForPreservationClassName = ClassName.get(packageName, className);
             String sanitisedTargetClassName = className.replace('.', '$');
 
             ClassName generatedClassName = ClassName.get(
@@ -166,8 +165,7 @@ public class StasisProcessor
             TypeSpec.Builder generatedClassBuilder = TypeSpec.classBuilder(generatedClassName)
                                                              .addModifiers(Modifier.PUBLIC);
 
-            new StatisPreservationStrategyClassBuilder(generatedClassBuilder,
-                                                       classForPreservationClassName,
+            new StatisPreservationStrategyClassBuilder(generatedClassBuilder, classForPreservation,
                                                        preservedMembers,
                                                        preservationStrategiesForClass)
                     .applyClassDefinitions()

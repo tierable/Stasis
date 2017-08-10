@@ -1,7 +1,6 @@
 package com.tierable.stasis;
 
 
-import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
@@ -10,6 +9,7 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
+import com.squareup.javapoet.TypeVariableName;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +19,8 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 
 import static com.tierable.stasis.StasisProcessor.CLASS_NAME_STASIS_PRESERVATION_STRATEGY;
 
@@ -36,17 +38,19 @@ public class StatisPreservationStrategyClassBuilder {
 
 
     private final TypeSpec.Builder       generatedClassBuilder;
-    private final ClassName              classForPreservationClassName;
+    private final TypeElement            classForPreservationElement;
+    private final TypeName               classForPreservationTypeName;
     private final Set<Element>           preservedMembers;
     private final Map<Element, TypeName> preservationStrategiesForClass;
 
 
     public StatisPreservationStrategyClassBuilder(Builder generatedClassBuilder,
-                                                  ClassName classForPreservationClassName,
+                                                  TypeElement classForPreservationElement,
                                                   Set<Element> preservedMembers,
                                                   Map<Element, TypeName> preservationStrategiesForClass) {
         this.generatedClassBuilder = generatedClassBuilder;
-        this.classForPreservationClassName = classForPreservationClassName;
+        this.classForPreservationElement = classForPreservationElement;
+        this.classForPreservationTypeName = TypeName.get(classForPreservationElement.asType());
         this.preservedMembers = preservedMembers;
         this.preservationStrategiesForClass = preservationStrategiesForClass;
     }
@@ -56,9 +60,15 @@ public class StatisPreservationStrategyClassBuilder {
         generatedClassBuilder.addSuperinterface(
                 ParameterizedTypeName.get(
                         CLASS_NAME_STASIS_PRESERVATION_STRATEGY,
-                        classForPreservationClassName
+                        classForPreservationTypeName
                 )
         );
+
+        List<? extends TypeParameterElement> typeParameters = classForPreservationElement.getTypeParameters();
+
+        for (TypeParameterElement typeParameter : typeParameters) {
+            generatedClassBuilder.addTypeVariable(TypeVariableName.get(typeParameter));
+        }
 
         return this;
     }
@@ -118,7 +128,7 @@ public class StatisPreservationStrategyClassBuilder {
                           .addModifiers(Modifier.PUBLIC)
                           .addAnnotation(Override.class)
                           .addParameter(
-                                  ParameterSpec.builder(classForPreservationClassName,
+                                  ParameterSpec.builder(classForPreservationTypeName,
                                                         PARAMETER_NAME_PRESERVED)
                                                .build()
                           )
@@ -131,7 +141,7 @@ public class StatisPreservationStrategyClassBuilder {
                           .addModifiers(Modifier.PUBLIC)
                           .addAnnotation(Override.class)
                           .addParameter(
-                                  ParameterSpec.builder(classForPreservationClassName,
+                                  ParameterSpec.builder(classForPreservationTypeName,
                                                         PARAMETER_NAME_PRESERVED)
                                                .build()
                           )

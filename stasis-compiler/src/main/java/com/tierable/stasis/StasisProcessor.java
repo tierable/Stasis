@@ -41,7 +41,7 @@ public class StasisProcessor
         extends AbstractProcessor {
     private static final boolean IS_TEST = false;
 
-    public static final ClassName CLASS_NAME_STASIS_PRESERVATION_STRATEGY              = ClassName.get(
+    public static final ClassName CLASS_NAME_STASIS_PRESERVATION_STRATEGY = ClassName.get(
             StasisPreservationStrategy.class
     );
 
@@ -83,6 +83,10 @@ public class StasisProcessor
 
     @Override
     public boolean process(Set<? extends TypeElement> elements, RoundEnvironment env) {
+        if (env.processingOver()) {
+            return true;
+        }
+
         Set<? extends Element> annotatedElements = env.getElementsAnnotatedWith(
                 StasisPreserve.class
         );
@@ -132,7 +136,7 @@ public class StasisProcessor
             System.out.println();
         }
 
-        for (Element classForPreservation : stasisProcessingConfiguration.classesForPreservation) {
+        for (TypeElement classForPreservation : stasisProcessingConfiguration.classesForPreservation) {
             TypeElement enclosingElement = findEnclosingTypeElement(classForPreservation);
 
             String packageName = getPackage(enclosingElement).getQualifiedName().toString();

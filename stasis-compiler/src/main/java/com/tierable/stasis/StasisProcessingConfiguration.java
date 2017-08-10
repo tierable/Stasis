@@ -24,12 +24,12 @@ import static com.tierable.stasis.StasisProcessor.findEnclosingTypeElement;
  * @date 2017-08-08
  */
 public class StasisProcessingConfiguration {
-    public final  Set<Element>               classesForPreservation;
+    public final  Set<TypeElement>           classesForPreservation;
     private final Map<Element, Set<Element>> preservedMembersForClasses;
     private final Map<Element, TypeName>     memberPreservationStrategies;
 
 
-    public StasisProcessingConfiguration(Set<Element> classesForPreservation, Map<Element, Set<Element>> preservedMembersForClasses, Map<Element, TypeName> memberPreservationStrategies) {
+    public StasisProcessingConfiguration(Set<TypeElement> classesForPreservation, Map<Element, Set<Element>> preservedMembersForClasses, Map<Element, TypeName> memberPreservationStrategies) {
         this.classesForPreservation = classesForPreservation;
         this.preservedMembersForClasses = preservedMembersForClasses;
         this.memberPreservationStrategies = memberPreservationStrategies;
@@ -45,10 +45,10 @@ public class StasisProcessingConfiguration {
         return preservedMembers;
     }
 
-    public Map<Element, TypeName> getPreservationStrategiesForClass(Element className)
+    public Map<Element, TypeName> getPreservationStrategiesForClass(TypeElement classElement)
             throws IllegalArgumentException {
-        if (classesForPreservation.contains(className)) {
-            Set<Element> membersInClass = preservedMembersForClasses.get(className);
+        if (classesForPreservation.contains(classElement)) {
+            Set<Element> membersInClass = preservedMembersForClasses.get(classElement);
 
             Map<Element, TypeName> classMemberPreservationStrategies = new HashMap<>();
             for (Element member : membersInClass) {
@@ -79,7 +79,7 @@ public class StasisProcessingConfiguration {
 
 
         public void extract(StasisPreservationMappingConfiguration stasisMappingConfiguration, Set<? extends Element> annotatedElements) {
-            Set<Element> classesForPreservation = new HashSet<>();
+            Set<TypeElement> classesForPreservation = new HashSet<>();
             Map<Element, Set<Element>> preservedMembersForClasses = new HashMap<>();
             Map<Element, TypeName> memberPreservationStrategies = new HashMap<>();
 

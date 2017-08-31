@@ -1,0 +1,25 @@
+language: android
+
+# TODO: setup android configuration
+
+
+jdk:
+  - oraclejdk8
+
+install: ./gradlew clean assemble
+
+script:
+  - ./gradlew clean :stasis-lib:build :stasis-lib-android:build :stasis-compiler:build install
+
+after_success:
+  - .buildscript/deploy_snapshot.sh
+
+notifications:
+  email: false
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle

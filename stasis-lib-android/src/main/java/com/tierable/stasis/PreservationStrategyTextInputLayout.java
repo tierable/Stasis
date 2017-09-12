@@ -8,24 +8,24 @@ import android.widget.EditText;
 /**
  * Preserves and restores the
  * <ul>
- * <li>{@link EditText} using {@link StasisPreservationStrategyTextView}
+ * <li>{@link EditText} using {@link PreservationStrategyTextView}
  * <li>Hint
  * <li>Error
- * <li>State saved by {@link StasisPreservationStrategyView}
+ * <li>State saved by {@link PreservationStrategyView}
  * </ul>
  *
  * @author Aniruddh Fichadia
  * @date 2017-08-05
  */
-public class StasisPreservationStrategyTextInputLayout
-        extends StasisPreservationStrategyView<TextInputLayout> {
-    private       CharSequence                       hint;
-    private       CharSequence                       error;
-    private final StasisPreservationStrategyTextView preservationStrategyEditText;
+public class PreservationStrategyTextInputLayout
+        extends PreservationStrategyView<TextInputLayout> {
+    private       CharSequence                 hint;
+    private       CharSequence                 error;
+    private final PreservationStrategyTextView preservationStrategyEditText;
 
 
-    public StasisPreservationStrategyTextInputLayout() {
-        preservationStrategyEditText = new StasisPreservationStrategyTextView();
+    public PreservationStrategyTextInputLayout() {
+        preservationStrategyEditText = new PreservationStrategyTextView();
     }
 
 
@@ -50,7 +50,7 @@ public class StasisPreservationStrategyTextInputLayout
 
     @Override
     public String toString() {
-        return "StasisPreservationStrategyTextInputLayout{" +
+        return "PreservationStrategyTextInputLayout{" +
                 "hint=" + hint +
                 ", error=" + error +
                 ", preservationStrategyEditText=" + preservationStrategyEditText +

@@ -10,7 +10,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.tierable.stasis.StasisPreserve;
+import com.tierable.stasis.Preserve;
 
 
 public class MainActivity
@@ -18,21 +18,21 @@ public class MainActivity
     private static final String KEY_PRESERVATION_STRATEGY = "key_preservation_strategy";
 
 
-    @StasisPreserve
+    @Preserve
     TextView     textView;
-    @StasisPreserve
+    @Preserve
     CheckBox     checkBox;
-    @StasisPreserve
+    @Preserve
     Button       button;
-    @StasisPreserve(ButtonCustomStasisPreservationStrategy.class)
+    @Preserve(ButtonCustomPreservationStrategy.class)
     Button       button2;
-    @StasisPreserve
+    @Preserve
     RecyclerView recyclerView;
-    @StasisPreserve
+    @Preserve
     ListView     listView;
 
     @Nullable
-    private StasisPreservationStrategyMainActivity preservationStrategy;
+    private PreservationStrategyMainActivity preservationStrategy;
 
 
     @Override
@@ -42,15 +42,15 @@ public class MainActivity
 
         if (savedInstanceState != null &&
                 savedInstanceState.containsKey(KEY_PRESERVATION_STRATEGY)) {
-            // TODO: Retrieve the StasisPreservationStrategy from somewhere ... Ideally you
+            // TODO: Retrieve the PreservationStrategy from somewhere ... Ideally you
             // won't save it using the savedInstanceState directly
-            preservationStrategy = (StasisPreservationStrategyMainActivity) savedInstanceState.getSerializable(
+            preservationStrategy = (PreservationStrategyMainActivity) savedInstanceState.getSerializable(
                     KEY_PRESERVATION_STRATEGY);
         }
 
         if (preservationStrategy == null) {
-            // TODO: Initialise the StasisPreservationStrategy
-            preservationStrategy = new StasisPreservationStrategyMainActivity();
+            // TODO: Initialise the PreservationStrategy
+            preservationStrategy = new PreservationStrategyMainActivity();
         } else {
             // TODO: UnFreeze/Restore the UI state
             preservationStrategy.unFreeze(this);

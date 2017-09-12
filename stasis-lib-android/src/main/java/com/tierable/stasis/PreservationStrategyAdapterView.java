@@ -10,14 +10,14 @@ import android.widget.AdapterView;
  * <ul>
  * <li>Adapter
  * <li>Selected item position
- * <li>State saved by {@link StasisPreservationStrategyView}
+ * <li>State saved by {@link PreservationStrategyView}
  * </ul>
  *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */
-public class StasisPreservationStrategyAdapterView<AdapterViewT extends AdapterView>
-        extends StasisPreservationStrategyView<AdapterViewT> {
+public class PreservationStrategyAdapterView<AdapterViewT extends AdapterView>
+        extends PreservationStrategyView<AdapterViewT> {
     private Adapter adapter;
     private int     selectedItemPosition;
 
@@ -41,7 +41,7 @@ public class StasisPreservationStrategyAdapterView<AdapterViewT extends AdapterV
 
     @Override
     public String toString() {
-        return "StasisPreservationStrategyAdapterView{" +
+        return "PreservationStrategyAdapterView{" +
                 "adapter=" + adapter +
                 ", selectedItemPosition=" + selectedItemPosition +
                 "} " + super.toString();

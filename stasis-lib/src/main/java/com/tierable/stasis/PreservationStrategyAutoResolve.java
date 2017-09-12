@@ -2,13 +2,14 @@ package com.tierable.stasis;
 
 
 /**
- * Don't preserve or restore any state
+ * Indicates that the {@link PreservationStrategy} should be automatically resolved using the
+ * {@link PreservationMapping}
  *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */
-public final class StasisPreservationStrategyDoNotPreserve
-        implements StasisPreservationStrategy {
+public final class PreservationStrategyAutoResolve
+        implements PreservationStrategy {
     @Override
     public final void freeze(Object preserved) {
     }
@@ -20,6 +21,6 @@ public final class StasisPreservationStrategyDoNotPreserve
 
     @Override
     public String toString() {
-        return "StasisPreservationStrategyDoNotPreserve{}";
+        return "PreservationStrategyAutoResolve{}";
     }
 }

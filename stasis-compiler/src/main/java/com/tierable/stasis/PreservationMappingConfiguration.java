@@ -25,18 +25,18 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import static com.tierable.stasis.StasisProcessor.CLASS_NAME_STASIS_PRESERVATION_STRATEGY;
+import static com.tierable.stasis.StasisProcessor.CLASS_NAME_PRESERVATION_STRATEGY;
 
 
 /**
  * @author Aniruddh Fichadia
  * @date 2017-08-08
  */
-public class StasisPreservationMappingConfiguration {
-    private static final ClassName CLASS_NAME_STASIS_PRESERVATION_STRATEGY_AUTO_RESOLVE = ClassName.get(
-            StasisPreservationStrategyAutoResolve.class
+public class PreservationMappingConfiguration {
+    private static final ClassName CLASS_NAME_PRESERVATION_STRATEGY_AUTO_RESOLVE = ClassName.get(
+            PreservationStrategyAutoResolve.class
     );
-    private static final ClassName CLASS_NAME_OBJECT                                    = ClassName.get(
+    private static final ClassName CLASS_NAME_OBJECT                             = ClassName.get(
             Object.class
     );
 
@@ -44,14 +44,15 @@ public class StasisPreservationMappingConfiguration {
     private final Map<TypeName, TypeName> defaultStrategies;
 
 
-    public StasisPreservationMappingConfiguration(TypeName fallbackPreservationStrategy, Map<TypeName, TypeName> defaultStrategies) {
+    public PreservationMappingConfiguration(TypeName fallbackPreservationStrategy,
+                                            Map<TypeName, TypeName> defaultStrategies) {
         this.fallbackPreservationStrategy = fallbackPreservationStrategy;
         this.defaultStrategies = defaultStrategies;
     }
 
 
     public TypeName getPreservationStrategyForElement(Element element) {
-        StasisPreserve elementAnnotation = element.getAnnotation(StasisPreserve.class);
+        Preserve elementAnnotation = element.getAnnotation(Preserve.class);
 
         if (!elementAnnotation.enabled()) { // Skip disabled annotations
             return null;
@@ -66,7 +67,7 @@ public class StasisPreservationMappingConfiguration {
         } catch (MirroredTypeException e) {
             TypeName annotatedPreservationStrategy = TypeName.get(e.getTypeMirror());
 
-            if (CLASS_NAME_STASIS_PRESERVATION_STRATEGY_AUTO_RESOLVE.equals(
+            if (CLASS_NAME_PRESERVATION_STRATEGY_AUTO_RESOLVE.equals(
                     annotatedPreservationStrategy)) {
                 TypeName elementTypeTypeName = TypeName.get(element.asType());
                 preservationStrategy = defaultStrategies.get(elementTypeTypeName);
@@ -85,17 +86,17 @@ public class StasisPreservationMappingConfiguration {
 
     @Override
     public String toString() {
-        return "StasisPreservationMappingConfiguration" +
+        return "PreservationMappingConfiguration" +
                 "\nfallbackPreservationStrategy=" + fallbackPreservationStrategy +
                 "\ndefaultStrategies=" + defaultStrategies;
     }
 
 
     public static class Extractor {
-        private final Elements                               elementUtils;
-        private final Types                                  typeUtils;
-        private final LinkedHashMap<Element, String>         errors;
-        private       StasisPreservationMappingConfiguration extractedConfiguration;
+        private final Elements                         elementUtils;
+        private final Types                            typeUtils;
+        private final LinkedHashMap<Element, String>   errors;
+        private       PreservationMappingConfiguration extractedConfiguration;
 
 
         public Extractor(Elements elementUtils, Types typeUtils) {
@@ -108,7 +109,7 @@ public class StasisPreservationMappingConfiguration {
         public void extract(RoundEnvironment env)
                 throws RuntimeException {
             Set<? extends Element> defaultPreservationConfigurations = env.getElementsAnnotatedWith(
-                    StasisPreservationMapping.class
+                    PreservationMapping.class
             );
 
             TypeName fallbackPreservationStrategy;
@@ -129,7 +130,7 @@ public class StasisPreservationMappingConfiguration {
                                     preservationConfigurationElement
                             );
 
-                            extractedConfiguration = new StasisPreservationMappingConfiguration(
+                            extractedConfiguration = new PreservationMappingConfiguration(
                                     fallbackPreservationStrategy, defaultStrategies
                             );
                         } else {
@@ -137,7 +138,7 @@ public class StasisPreservationMappingConfiguration {
                                     preservationConfigurationElement,
                                     String.format(
                                             Locale.ENGLISH, "%s must be an interface",
-                                            StasisPreservationMapping.class.getSimpleName()
+                                            PreservationMapping.class.getSimpleName()
                                     )
                             );
                         }
@@ -155,7 +156,7 @@ public class StasisPreservationMappingConfiguration {
                     throw new RuntimeException(
                             String.format(
                                     Locale.ENGLISH, "No %s found",
-                                    StasisPreservationMapping.class.getSimpleName()
+                                    PreservationMapping.class.getSimpleName()
                             )
                     );
                 default: // Any other size
@@ -165,8 +166,8 @@ public class StasisPreservationMappingConfiguration {
                                 String.format(
                                         Locale.ENGLISH,
                                         "Multiple %s's found. You can only define a single %s",
-                                        StasisPreservationMapping.class.getSimpleName(),
-                                        StasisPreservationMapping.class.getSimpleName()
+                                        PreservationMapping.class.getSimpleName(),
+                                        PreservationMapping.class.getSimpleName()
                                 )
                         );
                     }
@@ -176,12 +177,12 @@ public class StasisPreservationMappingConfiguration {
 
 
         /**
-         * @return A map where the keys are the preserved types, and the values are the corresponding
-         * {@link StasisPreservationStrategy}
+         * @return A map where the keys are the preserved types, and the values are the corresponding {@link
+         * PreservationStrategy}
          */
         private Map<TypeName, TypeName> extractDefaultStrategies(TypeElement element) {
             final TypeMirror preservationStrategyType = elementUtils.getTypeElement(
-                    CLASS_NAME_STASIS_PRESERVATION_STRATEGY.toString()
+                    CLASS_NAME_PRESERVATION_STRATEGY.toString()
             ).asType();
 
 
@@ -198,7 +199,7 @@ public class StasisPreservationMappingConfiguration {
                             method,
                             String.format(
                                     Locale.ENGLISH, "Mapping method must return a %s",
-                                    CLASS_NAME_STASIS_PRESERVATION_STRATEGY.simpleName()
+                                    CLASS_NAME_PRESERVATION_STRATEGY.simpleName()
                             )
                     );
                     continue;
@@ -233,8 +234,8 @@ public class StasisPreservationMappingConfiguration {
         }
 
         private TypeName getFallbackPreservationStrategy(Element element) {
-            StasisPreservationMapping annotation = element.getAnnotation(
-                    StasisPreservationMapping.class
+            PreservationMapping annotation = element.getAnnotation(
+                    PreservationMapping.class
             );
 
             try {
@@ -254,7 +255,7 @@ public class StasisPreservationMappingConfiguration {
             return errors;
         }
 
-        public StasisPreservationMappingConfiguration getExtractedConfiguration() {
+        public PreservationMappingConfiguration getExtractedConfiguration() {
             return extractedConfiguration;
         }
     }

@@ -16,8 +16,8 @@ import android.view.View;
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */
-public class StasisPreservationStrategyView<ViewT extends View>
-        implements StasisPreservationStrategy<ViewT> {
+public class PreservationStrategyView<ViewT extends View>
+        implements PreservationStrategy<ViewT> {
     private int          visibility;
     private boolean      enabled;
     private boolean      selected;
@@ -43,7 +43,7 @@ public class StasisPreservationStrategyView<ViewT extends View>
 
     @Override
     public String toString() {
-        return "StasisPreservationStrategyView{" +
+        return "PreservationStrategyView{" +
                 "visibility=" + visibility +
                 ", enabled=" + enabled +
                 ", selected=" + selected +

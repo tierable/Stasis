@@ -22,14 +22,14 @@ import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 
-import static com.tierable.stasis.StasisProcessor.CLASS_NAME_STASIS_PRESERVATION_STRATEGY;
+import static com.tierable.stasis.StasisProcessor.CLASS_NAME_PRESERVATION_STRATEGY;
 
 
 /**
  * @author Aniruddh Fichadia
  * @date 2017-07-30
  */
-public class StatisPreservationStrategyClassBuilder {
+public class PreservationStrategyClassBuilder {
     private static final String ANNOTATION_NAME_NULLABLE = "Nullable";
 
     private static final String PARAMETER_NAME_PRESERVED = "preserved";
@@ -44,10 +44,10 @@ public class StatisPreservationStrategyClassBuilder {
     private final Map<Element, TypeName> preservationStrategiesForClass;
 
 
-    public StatisPreservationStrategyClassBuilder(Builder generatedClassBuilder,
-                                                  TypeElement classForPreservationElement,
-                                                  Set<Element> preservedMembers,
-                                                  Map<Element, TypeName> preservationStrategiesForClass) {
+    public PreservationStrategyClassBuilder(Builder generatedClassBuilder,
+                                            TypeElement classForPreservationElement,
+                                            Set<Element> preservedMembers,
+                                            Map<Element, TypeName> preservationStrategiesForClass) {
         this.generatedClassBuilder = generatedClassBuilder;
         this.classForPreservationElement = classForPreservationElement;
         this.classForPreservationTypeName = TypeName.get(classForPreservationElement.asType());
@@ -56,10 +56,10 @@ public class StatisPreservationStrategyClassBuilder {
     }
 
 
-    public StatisPreservationStrategyClassBuilder applyClassDefinitions() {
+    public PreservationStrategyClassBuilder applyClassDefinitions() {
         generatedClassBuilder.addSuperinterface(
                 ParameterizedTypeName.get(
-                        CLASS_NAME_STASIS_PRESERVATION_STRATEGY,
+                        CLASS_NAME_PRESERVATION_STRATEGY,
                         classForPreservationTypeName
                 )
         );
@@ -73,7 +73,7 @@ public class StatisPreservationStrategyClassBuilder {
         return this;
     }
 
-    public StatisPreservationStrategyClassBuilder applyFields() {
+    public PreservationStrategyClassBuilder applyFields() {
         for (Element preservedMember : preservedMembers) {
             TypeName preservationStrategy = preservationStrategiesForClass.get(preservedMember);
 
@@ -92,7 +92,7 @@ public class StatisPreservationStrategyClassBuilder {
         return this;
     }
 
-    public StatisPreservationStrategyClassBuilder applyMethods() {
+    public PreservationStrategyClassBuilder applyMethods() {
         CodeBlock.Builder freezeCodeBuilder = CodeBlock.builder();
         CodeBlock.Builder unFreezeCodeBuilder = CodeBlock.builder();
 
@@ -166,6 +166,6 @@ public class StatisPreservationStrategyClassBuilder {
 
 
     private String getFieldNameForPreservationStrategy(Element preservedMember) {
-        return preservedMember.getSimpleName() + CLASS_NAME_STASIS_PRESERVATION_STRATEGY.simpleName();
+        return preservedMember.getSimpleName() + CLASS_NAME_PRESERVATION_STRATEGY.simpleName();
     }
 }

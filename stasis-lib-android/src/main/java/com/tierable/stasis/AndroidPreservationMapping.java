@@ -24,39 +24,39 @@ import android.widget.ToggleButton;
 
 
 /**
- * Sensible defaults for Android. Extend this interface in your {@link StasisPreservationMapping}
+ * Sensible defaults for Android. Extend this interface in your {@link PreservationMapping}
  * if required.
  *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */
-public interface AndroidStasisPreservationMapping {
-    StasisPreservationStrategyTextView getStrategy(
+public interface AndroidPreservationMapping {
+    PreservationStrategyTextView getStrategy(
             TextView textView, AppCompatTextView appCompatTextView, EditText editText,
             AppCompatEditText appCompatEditText, Button button, AppCompatButton appCompatButton
     );
 
-    StasisPreservationStrategyCompoundButton getStrategy(
+    PreservationStrategyCompoundButton getStrategy(
             CompoundButton compoundButton, CheckBox checkBox, AppCompatCheckBox appCompatCheckBox,
             ToggleButton toggleButton, RadioButton radioButton, AppCompatRadioButton appCompatRadioButton
     );
 
-    StasisPreservationStrategyTextInputLayout getStrategy(
+    PreservationStrategyTextInputLayout getStrategy(
             TextInputLayout textInputLayout
     );
 
 
-    StasisPreservationStrategyAdapterView getStrategy(
+    PreservationStrategyAdapterView getStrategy(
             AdapterView adapterView, ListView listView, ExpandableListView expandableListView, Spinner spinner,
             AppCompatSpinner appCompatSpinner
     );
 
-    StasisPreservationStrategyRecyclerView getStrategy(
+    PreservationStrategyRecyclerView getStrategy(
             RecyclerView recyclerView
     );
 
 
-    StasisPreservationStrategyProgressBar getStrategy(
+    PreservationStrategyProgressBar getStrategy(
             ProgressBar ProgressBar
     );
 }

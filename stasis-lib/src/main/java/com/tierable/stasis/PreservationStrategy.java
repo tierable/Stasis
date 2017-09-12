@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */
-public interface StasisPreservationStrategy<PreservedT>
+public interface PreservationStrategy<PreservedT>
         extends Serializable {
     /** Freeze/Save the state of the intended target */
     void freeze(PreservedT preserved);

@@ -1,15 +1,22 @@
 language: android
 
-# TODO: setup android configuration
-
+android:
+  components:
+    - tools
+    - platform-tools
 
 jdk:
   - oraclejdk8
 
+before_install:
+  - mkdir "$ANDROID_HOME/licenses" || true
+  - echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+  - sdkmanager tools
+
 install: ./gradlew clean assemble
 
 script:
-  - ./gradlew clean :stasis-lib:build :stasis-lib-android:build :stasis-compiler:build install
+  - ./gradlew clean :stasis-lib:build :stasis-lib-android:build :stasis-compiler:build
 
 after_success:
   - .buildscript/deploy_snapshot.sh

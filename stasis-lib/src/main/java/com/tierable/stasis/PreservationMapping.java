@@ -9,7 +9,7 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
 
 
 /**
- * Marks that the class provides the mapping of {@link StasisPreservationStrategy} to types.
+ * Marks that the class provides the mapping of {@link PreservationStrategy} to types.
  * <p>
  * This annotation is only valid for interfaces.
  *
@@ -18,6 +18,6 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
  */
 @Target(TYPE)
 @Retention(CLASS)
-public @interface StasisPreservationMapping {
-    Class<? extends StasisPreservationStrategy> value() default StasisPreservationStrategyDoNotPreserve.class;
+public @interface PreservationMapping {
+    Class<? extends PreservationStrategy> value() default PreservationStrategyDoNotPreserve.class;
 }

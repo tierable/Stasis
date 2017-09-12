@@ -12,7 +12,7 @@ import android.support.v7.widget.RecyclerView.LayoutManager;
  * <ul>
  * <li>Adapter
  * <li>First visible item position
- * <li>State saved by {@link StasisPreservationStrategyView}
+ * <li>State saved by {@link PreservationStrategyView}
  * </ul>
  * <p>
  * Note: Make sure {@link android.support.v7.widget.RecyclerView.AdapterDataObserver}'s are registered and
@@ -21,8 +21,8 @@ import android.support.v7.widget.RecyclerView.LayoutManager;
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */
-public class StasisPreservationStrategyRecyclerView
-        extends StasisPreservationStrategyView<RecyclerView> {
+public class PreservationStrategyRecyclerView
+        extends PreservationStrategyView<RecyclerView> {
     private RecyclerView.Adapter adapter;
     private int                  firstVisibleItemPosition;
 
@@ -56,7 +56,7 @@ public class StasisPreservationStrategyRecyclerView
 
     @Override
     public String toString() {
-        return "StasisPreservationStrategyRecyclerView{" +
+        return "PreservationStrategyRecyclerView{" +
                 "adapter=" + adapter +
                 ", firstVisibleItemPosition=" + firstVisibleItemPosition +
                 "} " + super.toString();

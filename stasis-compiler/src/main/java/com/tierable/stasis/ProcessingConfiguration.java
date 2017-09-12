@@ -23,13 +23,13 @@ import static com.tierable.stasis.StasisProcessor.findEnclosingTypeElement;
  * @author Aniruddh Fichadia
  * @date 2017-08-08
  */
-public class StasisProcessingConfiguration {
+public class ProcessingConfiguration {
     public final  Set<TypeElement>           classesForPreservation;
     private final Map<Element, Set<Element>> preservedMembersForClasses;
     private final Map<Element, TypeName>     memberPreservationStrategies;
 
 
-    public StasisProcessingConfiguration(Set<TypeElement> classesForPreservation, Map<Element, Set<Element>> preservedMembersForClasses, Map<Element, TypeName> memberPreservationStrategies) {
+    public ProcessingConfiguration(Set<TypeElement> classesForPreservation, Map<Element, Set<Element>> preservedMembersForClasses, Map<Element, TypeName> memberPreservationStrategies) {
         this.classesForPreservation = classesForPreservation;
         this.preservedMembersForClasses = preservedMembersForClasses;
         this.memberPreservationStrategies = memberPreservationStrategies;
@@ -66,7 +66,7 @@ public class StasisProcessingConfiguration {
 
     @Override
     public String toString() {
-        return "StasisProcessingConfiguration" +
+        return "ProcessingConfiguration" +
                 "\nclassesForPreservation=" + classesForPreservation +
                 "\npreservedMembersForClasses=" + preservedMembersForClasses +
                 "\nmemberPreservationStrategies=" + memberPreservationStrategies;
@@ -75,10 +75,10 @@ public class StasisProcessingConfiguration {
 
     public static class Extractor {
         private final LinkedHashMap<Element, String> errors = new LinkedHashMap<>();
-        private StasisProcessingConfiguration extractedConfiguration;
+        private ProcessingConfiguration extractedConfiguration;
 
 
-        public void extract(StasisPreservationMappingConfiguration stasisMappingConfiguration, Set<? extends Element> annotatedElements) {
+        public void extract(PreservationMappingConfiguration stasisMappingConfiguration, Set<? extends Element> annotatedElements) {
             Set<TypeElement> classesForPreservation = new HashSet<>();
             Map<Element, Set<Element>> preservedMembersForClasses = new HashMap<>();
             Map<Element, TypeName> memberPreservationStrategies = new HashMap<>();
@@ -121,7 +121,7 @@ public class StasisProcessingConfiguration {
                 }
             }
 
-            extractedConfiguration = new StasisProcessingConfiguration(
+            extractedConfiguration = new ProcessingConfiguration(
                     classesForPreservation, preservedMembersForClasses, memberPreservationStrategies
             );
         }
@@ -152,7 +152,7 @@ public class StasisProcessingConfiguration {
             return errors;
         }
 
-        public StasisProcessingConfiguration getExtractedConfiguration() {
+        public ProcessingConfiguration getExtractedConfiguration() {
             return extractedConfiguration;
         }
     }

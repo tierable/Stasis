@@ -8,14 +8,14 @@ import android.widget.CompoundButton;
  * Preserves and restores the
  * <ul>
  * <li>Checked state
- * <li>State saved by {@link StasisPreservationStrategyView}
+ * <li>State saved by {@link PreservationStrategyView}
  * </ul>
  *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */
-public class StasisPreservationStrategyCompoundButton
-        extends StasisPreservationStrategyView<CompoundButton> {
+public class PreservationStrategyCompoundButton
+        extends PreservationStrategyView<CompoundButton> {
     private boolean checked;
 
 
@@ -36,7 +36,7 @@ public class StasisPreservationStrategyCompoundButton
 
     @Override
     public String toString() {
-        return "StasisPreservationStrategyCompoundButton{" +
+        return "PreservationStrategyCompoundButton{" +
                 "checked=" + checked +
                 "} " + super.toString();
     }

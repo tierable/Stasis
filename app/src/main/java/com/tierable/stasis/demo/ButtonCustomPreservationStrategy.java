@@ -3,15 +3,15 @@ package com.tierable.stasis.demo;
 
 import android.widget.Button;
 
-import com.tierable.stasis.StasisPreservationStrategy;
+import com.tierable.stasis.PreservationStrategy;
 
 
 /**
  * @author Aniruddh Fichadia
  * @date 2017-07-28
  */
-public class ButtonCustomStasisPreservationStrategy
-        implements StasisPreservationStrategy<Button> {
+public class ButtonCustomPreservationStrategy
+        implements PreservationStrategy<Button> {
     @Override
     public void freeze(Button preserved) {
         // Do something

@@ -41,8 +41,8 @@ public class StasisProcessor
         extends AbstractProcessor {
     private static final boolean IS_TEST = false;
 
-    public static final ClassName CLASS_NAME_STASIS_PRESERVATION_STRATEGY = ClassName.get(
-            StasisPreservationStrategy.class
+    public static final ClassName CLASS_NAME_PRESERVATION_STRATEGY = ClassName.get(
+            PreservationStrategy.class
     );
 
 
@@ -73,8 +73,8 @@ public class StasisProcessor
     private Set<Class<? extends Annotation>> getSupportedAnnotations() {
         Set<Class<? extends Annotation>> annotations = new LinkedHashSet<>();
 
-        annotations.add(StasisPreservationMapping.class);
-        annotations.add(StasisPreserve.class);
+        annotations.add(PreservationMapping.class);
+        annotations.add(Preserve.class);
 
         return annotations;
     }
@@ -88,7 +88,7 @@ public class StasisProcessor
         }
 
         Set<? extends Element> annotatedElements = env.getElementsAnnotatedWith(
-                StasisPreserve.class
+                Preserve.class
         );
         if (annotatedElements.isEmpty()) {
             // Early exit if there are no elements, or if this is another annotation processing
@@ -98,7 +98,7 @@ public class StasisProcessor
 
 
         // Extract mapping configuration
-        StasisPreservationMappingConfiguration.Extractor mappingConfigExtractor = new StasisPreservationMappingConfiguration.Extractor(
+        PreservationMappingConfiguration.Extractor mappingConfigExtractor = new PreservationMappingConfiguration.Extractor(
                 elementUtils, typeUtils
         );
         mappingConfigExtractor.extract(env);
@@ -109,12 +109,12 @@ public class StasisProcessor
 
             return true;
         }
-        StasisPreservationMappingConfiguration stasisMappingConfiguration = mappingConfigExtractor
+        PreservationMappingConfiguration stasisMappingConfiguration = mappingConfigExtractor
                 .getExtractedConfiguration();
 
 
         // Extract processing configuration
-        StasisProcessingConfiguration.Extractor processingConfigExtractor = new StasisProcessingConfiguration.Extractor();
+        ProcessingConfiguration.Extractor processingConfigExtractor = new ProcessingConfiguration.Extractor();
         processingConfigExtractor.extract(stasisMappingConfiguration, annotatedElements);
 
         if (processingConfigExtractor.hasErrors()) {
@@ -125,18 +125,18 @@ public class StasisProcessor
 
             return true;
         }
-        StasisProcessingConfiguration stasisProcessingConfiguration = processingConfigExtractor
+        ProcessingConfiguration processingConfiguration = processingConfigExtractor
                 .getExtractedConfiguration();
 
 
         if (IS_TEST) {
             System.out.println(stasisMappingConfiguration);
             System.out.println();
-            System.out.println(stasisProcessingConfiguration);
+            System.out.println(processingConfiguration);
             System.out.println();
         }
 
-        for (TypeElement classForPreservation : stasisProcessingConfiguration.classesForPreservation) {
+        for (TypeElement classForPreservation : processingConfiguration.classesForPreservation) {
             TypeElement enclosingElement = findEnclosingTypeElement(classForPreservation);
 
             String packageName = getPackage(enclosingElement).getQualifiedName().toString();
@@ -148,12 +148,12 @@ public class StasisProcessor
 
             ClassName generatedClassName = ClassName.get(
                     packageName,
-                    CLASS_NAME_STASIS_PRESERVATION_STRATEGY.simpleName() + sanitisedTargetClassName
+                    CLASS_NAME_PRESERVATION_STRATEGY.simpleName() + sanitisedTargetClassName
             );
-            Set<Element> preservedMembers = stasisProcessingConfiguration.getPreservedMembersForClass(
+            Set<Element> preservedMembers = processingConfiguration.getPreservedMembersForClass(
                     classForPreservation
             );
-            Map<Element, TypeName> preservationStrategiesForClass = stasisProcessingConfiguration.getPreservationStrategiesForClass(
+            Map<Element, TypeName> preservationStrategiesForClass = processingConfiguration.getPreservationStrategiesForClass(
                     classForPreservation
             );
 
@@ -169,9 +169,9 @@ public class StasisProcessor
             TypeSpec.Builder generatedClassBuilder = TypeSpec.classBuilder(generatedClassName)
                                                              .addModifiers(Modifier.PUBLIC);
 
-            new StatisPreservationStrategyClassBuilder(generatedClassBuilder, classForPreservation,
-                                                       preservedMembers,
-                                                       preservationStrategiesForClass)
+            new PreservationStrategyClassBuilder(generatedClassBuilder, classForPreservation,
+                                                 preservedMembers,
+                                                 preservationStrategiesForClass)
                     .applyClassDefinitions()
                     .applyFields()
                     .applyMethods();

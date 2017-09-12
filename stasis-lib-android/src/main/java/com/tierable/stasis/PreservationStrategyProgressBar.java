@@ -9,14 +9,14 @@ import android.widget.ProgressBar;
  * <ul>
  * <li>Max
  * <li>Progress
- * <li>State saved by {@link StasisPreservationStrategyView}
+ * <li>State saved by {@link PreservationStrategyView}
  * </ul>
  *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */
-public class StasisPreservationStrategyProgressBar
-        extends StasisPreservationStrategyView<ProgressBar> {
+public class PreservationStrategyProgressBar
+        extends PreservationStrategyView<ProgressBar> {
     private int max;
     private int progress;
 
@@ -40,7 +40,7 @@ public class StasisPreservationStrategyProgressBar
 
     @Override
     public String toString() {
-        return "StasisPreservationStrategyProgressBar{" +
+        return "PreservationStrategyProgressBar{" +
                 "max=" + max +
                 ", progress=" + progress +
                 "} " + super.toString();

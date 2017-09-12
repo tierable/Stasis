@@ -10,14 +10,14 @@ import android.widget.TextView;
  * <ul>
  * <li>Text
  * <li>Selection info
- * <li>State saved by {@link StasisPreservationStrategyView}
+ * <li>State saved by {@link PreservationStrategyView}
  * </ul>
  *
  * @author Aniruddh Fichadia
  * @date 2017-07-27
  */
-public class StasisPreservationStrategyTextView
-        extends StasisPreservationStrategyView<TextView> {
+public class PreservationStrategyTextView
+        extends PreservationStrategyView<TextView> {
     private Parcelable frozenProperties;
 
 
@@ -44,7 +44,7 @@ public class StasisPreservationStrategyTextView
 
     @Override
     public String toString() {
-        return "StasisPreservationStrategyTextView{" +
+        return "PreservationStrategyTextView{" +
                 "frozenProperties=" + frozenProperties +
                 "} " + super.toString();
     }

@@ -1,6 +1,4 @@
 ext {
-    stasisVersion = '0.1.0'
-
     stasisSourceCompatibility = JavaVersion.VERSION_1_7
 
     stasisMinSdkVersion = 16

@@ -1,5 +1,10 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
 apply from: "../common.gradle"
+
+
 
 android {
     compileSdkVersion stasisCompileSdkVersion
@@ -10,7 +15,7 @@ android {
         targetSdkVersion stasisTargetSdkVersion
 
         versionCode 1
-        versionName "1.0"
+        versionName VERSION
     }
     buildTypes {
         release {
@@ -29,3 +34,6 @@ dependencies {
 
     compile project(":stasis-lib")
 }
+
+
+apply from: '../gradle/mvn_deploy.gradle'

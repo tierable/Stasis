@@ -1,4 +1,15 @@
 # Stasis
+[![Build Status](https://travis-ci.org/tierable/Stasis.svg?branch=feature%2Fsetup_ci_and_artifact_uploads)](https://travis-ci.org/tierable/Stasis)
+
+Download Stasis Lib
+[![Download Stasis Lib](https://api.bintray.com/packages/ani-fichadia/Tierable/com.tierable.stasis%3Astasis-lib/images/download.svg)](https://bintray.com/ani-fichadia/Tierable/com.tierable.stasis%3Astasis-lib/_latestVersion)
+
+Download Stasis Lib Android
+[![Download Stasis Lib Android](https://api.bintray.com/packages/ani-fichadia/Tierable/com.tierable.stasis%3Astasis-lib-android/images/download.svg)](https://bintray.com/ani-fichadia/Tierable/com.tierable.stasis%3Astasis-lib-android/_latestVersion)
+
+Download Stasis Compiler
+[![Download Stasis Compiler](https://api.bintray.com/packages/ani-fichadia/Tierable/com.tierable.stasis%3Astasis-compiler/images/download.svg)](https://bintray.com/ani-fichadia/Tierable/com.tierable.stasis%3Astasis-compiler/_latestVersion)
+
 Stasis is a general purpose library to persist state using annotation processing and code generation.
 
 

@@ -30,7 +30,8 @@ import static com.tierable.stasis.StasisProcessor.CLASS_NAME_PRESERVATION_STRATE
  * @date 2017-07-30
  */
 public class PreservationStrategyClassBuilder {
-    private static final String ANNOTATION_NAME_NULLABLE = "Nullable";
+    private static final String ANNOTATION_NAME_NULLABLE       = "Nullable";
+    private static final String SUFFIX_NULLABLE_TRACKING_FIELD = "WasNull";
 
     private static final String PARAMETER_NAME_PRESERVED = "preserved";
     private static final String METHOD_NAME_FREEZE       = "freeze";
@@ -87,6 +88,18 @@ public class PreservationStrategyClassBuilder {
                              .initializer(CodeBlock.of("new $T()", preservationStrategy))
                              .build()
             );
+
+
+            if (isNullable(preservedMember)) {
+                generatedClassBuilder.addField(
+                        FieldSpec.builder(TypeName.BOOLEAN,
+                                          getNullableTrackingFieldName(preservedMember),
+                                          Modifier.PRIVATE)
+                                 .initializer(CodeBlock.of("false"))
+                                 .build()
+
+                );
+            }
         }
 
         return this;
@@ -104,10 +117,13 @@ public class PreservationStrategyClassBuilder {
             boolean memberIsNullable = isNullable(preservedMember);
 
             if (memberIsNullable) {
-                freezeCodeBuilder.beginControlFlow("if ($L.$L != null)", PARAMETER_NAME_PRESERVED,
-                                                   preservedMember);
-                unFreezeCodeBuilder.beginControlFlow("if ($L.$L != null)", PARAMETER_NAME_PRESERVED,
-                                                     preservedMember);
+                String nullableTrackingFieldName = getNullableTrackingFieldName(preservedMember);
+
+                freezeCodeBuilder.addStatement("this.$L = ($L.$L == null)",
+                                               nullableTrackingFieldName, PARAMETER_NAME_PRESERVED,
+                                               preservedMember)
+                                 .beginControlFlow("if (!$L)", nullableTrackingFieldName);
+                unFreezeCodeBuilder.beginControlFlow("if (!$L)", nullableTrackingFieldName);
             }
 
             freezeCodeBuilder.addStatement("$L.$L($L.$L)", fieldNameFieldPreservationStrategy,
@@ -167,5 +183,9 @@ public class PreservationStrategyClassBuilder {
 
     private String getFieldNameForPreservationStrategy(Element preservedMember) {
         return preservedMember.getSimpleName() + CLASS_NAME_PRESERVATION_STRATEGY.simpleName();
+    }
+
+    private String getNullableTrackingFieldName(Element preservedMember) {
+        return preservedMember.getSimpleName() + SUFFIX_NULLABLE_TRACKING_FIELD;
     }
 }

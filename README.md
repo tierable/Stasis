@@ -1,4 +1,15 @@
 # Stasis
+[![Build Status](https://travis-ci.org/tierable/Stasis.svg?branch=feature%2Fsetup_ci_and_artifact_uploads)](https://travis-ci.org/tierable/Stasis)
+
+Download Stasis Lib
+[![Download Stasis Lib](https://api.bintray.com/packages/ani-fichadia/Tierable/com.tierable.stasis%3Astasis-lib/images/download.svg)](https://bintray.com/ani-fichadia/Tierable/com.tierable.stasis%3Astasis-lib/_latestVersion)
+
+Download Stasis Lib Android
+[![Download Stasis Lib Android](https://api.bintray.com/packages/ani-fichadia/Tierable/com.tierable.stasis%3Astasis-lib-android/images/download.svg)](https://bintray.com/ani-fichadia/Tierable/com.tierable.stasis%3Astasis-lib-android/_latestVersion)
+
+Download Stasis Compiler
+[![Download Stasis Compiler](https://api.bintray.com/packages/ani-fichadia/Tierable/com.tierable.stasis%3Astasis-compiler/images/download.svg)](https://bintray.com/ani-fichadia/Tierable/com.tierable.stasis%3Astasis-compiler/_latestVersion)
+
 Stasis is a general purpose library to persist state using annotation processing and code generation.
 
 
@@ -12,13 +23,13 @@ Stasis provides an Android specialisation with sensible defaults for UI state pr
 
 ## Usage
 Stasis uses a similar approach to [Jake Wharton's ButterKnife](https://github.com/JakeWharton/butterknife) library. 
-In a class you'd like to preserve, just annotate the relevant fields with the `@StasisPreserve` annotation and the annotation processor generates a `StasisPreservationStrategy` for your class.
+In a class you'd like to preserve, just annotate the relevant fields with the `@Preserve` annotation and the annotation processor generates a `PreservationStrategy` for your class.
 
 ### Dependencies
 TODO: coming soon!
 
 ### Providing a mapping class
-Provide a *single* interface (for now?) in your module and mark it with the `@StasisPreservationMapping` annotation.
+Provide a *single* interface (for now?) in your module and mark it with the `@PreservationMapping` annotation.
 You can define a fallback strategy if you don't want to define a mapping for every type of preserved class.
 The default fallback strategy is to not save anything.
 
@@ -26,32 +37,32 @@ The mapping interface can extend other interfaces.
 Methods in the interface:
 * Can be named whatever you desire (as long as it makes sense). 
 The `getStrategy` name has been used in examples as an appropriate name though
-* Must return a `StatisPreservationStrategy`
-* Can have more than one parameter if you need the same `StatisPreservationStrategy` for multiple types
+* Must return a `PreservationStrategy`
+* Can have more than one parameter if you need the same `PreservationStrategy` for multiple types
 
 ```Java
 // Uses the marker annotation
-@StasisPreservationMapping(MyFallbackPreservationStrategy.class)
+@PreservationMapping(MyFallbackPreservationStrategy.class)
 public interface DemoMapping 
 	extends AnotherMapping, YetAnotherMapping {
-	// Multiple mappings for a StasisPreservationStrategy
-	StasisPreservationStrategyButton getStrategy(Button button, ButtonChildClass buttonChildClass);
+	// Multiple mappings for a PreservationStrategy
+	PreservationStrategyButton getStrategy(Button button, ButtonChildClass buttonChildClass);
 
-	// Single mapping for a StasisPreservationStrategy
-	StasisPreservationStrategyTextField getStrategy(TextField textField);
+	// Single mapping for a PreservationStrategy
+	PreservationStrategyTextField getStrategy(TextField textField);
 
 	// etc
 }
 ```
 
 ### Creating custom preservation strategies
-Just create a class implementing the `StasisPreservationStrategy` interface or extending a pre-existing `StasisPreservationStrategy`.
+Just create a class implementing the `PreservationStrategy` interface or extending a pre-existing `PreservationStrategy`.
 The only limitation is that you can only use the default (no argument) constructor for generated code.
 
 
 ### Preserving state
-Stasis generates a `StasisPreservationStrategy` implementation for every class with atleast one member annotated with `@StasisPreserve`.
-The generated class names will be in the format `StasisPreservationStrategy[YourClassNameHere]` and will be outputted to the same package.
+Stasis generates a `PreservationStrategy` implementation for every class with atleast one member annotated with `@Preserve`.
+The generated class names will be in the format `PreservationStrategy[YourClassNameHere]` and will be outputted to the same package.
 Preserved fields must be either public or package private so they are accessible by the generated code.
 
 
@@ -59,23 +70,23 @@ Preserved fields must be either public or package private so they are accessible
 
 public class DemoClass {
 
-	@StasisPreserve
+	@Preserve
 	Button buttonWithADefaultPreservationStrategy;
 
-	@StasisPreserve(value = MyCustomButtonPreservationStrategy.class)
+	@Preserve(value = MyCustomButtonPreservationStrategy.class)
 	Button buttonWithACustomPreservationStrategy;
 
-	@StasisPreserve(enabled = false)
+	@Preserve(enabled = false)
 	Button buttonWithPreservationDisabled;
 
 	Button buttonNotPreserved;
 
 	// Generated by Stasis
-	private StasisPreservationStrategyDemoClass preservationStrategy;
+	private PreservationStrategyDemoClass preservationStrategy;
 	
 	
 	public void initialise() {
-		preservationStrategy = new StasisPreservationStrategyDemoClass();
+		preservationStrategy = new PreservationStrategyDemoClass();
 	}
 	
 	public void saveState() {

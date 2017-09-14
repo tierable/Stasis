@@ -25,8 +25,29 @@ Stasis provides an Android specialisation with sensible defaults for UI state pr
 Stasis uses a similar approach to [Jake Wharton's ButterKnife](https://github.com/JakeWharton/butterknife) library. 
 In a class you'd like to preserve, just annotate the relevant fields with the `@Preserve` annotation and the annotation processor generates a `PreservationStrategy` for your class.
 
-### Dependencies
-TODO: coming soon!
+### Downloading dependencies
+In your modules `build.gradle` dependencies, add:
+```
+compile "com.tierable.stasis:stasis-lib:$stasisVersion"
+// For Android projects
+compile "com.tierable.stasis:stasis-lib-android:$stasisVersion"
+```
+
+To enable annotation processing:
+
+For Android:
+```
+annotationProcessor "com.tierable.stasis:stasis-compiler:$stasisVersion"
+```
+For Java
+```
+apt "com.tierable.stasis:stasis-compiler:$stasisVersion"
+```
+For Kotlin?
+```
+kapt "com.tierable.stasis:stasis-compiler:$stasisVersion"
+```
+
 
 ### Providing a mapping class
 Provide a *single* interface (for now?) in your module and mark it with the `@PreservationMapping` annotation.

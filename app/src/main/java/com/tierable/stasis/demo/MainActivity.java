@@ -21,15 +21,19 @@ public class MainActivity
     @Preserve
     TextView     textView;
     @Preserve
+    @Nullable
+    TextView     nullableField;
+    @Preserve(ButtonCustomPreservationStrategy.class)
+    Button       buttonWithCustomPreservationStrategy;
+    @Preserve
     CheckBox     checkBox;
     @Preserve
     Button       button;
-    @Preserve(ButtonCustomPreservationStrategy.class)
-    Button       button2;
     @Preserve
     RecyclerView recyclerView;
     @Preserve
     ListView     listView;
+
 
     @Nullable
     private PreservationStrategyMainActivity preservationStrategy;

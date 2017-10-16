@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.CLASS;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 
 /**
@@ -17,7 +17,7 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
  * @date 2017-07-27
  */
 @Target(TYPE)
-@Retention(CLASS)
+@Retention(SOURCE)
 public @interface PreservationMapping {
     Class<? extends PreservationStrategy> value() default PreservationStrategyDoNotPreserve.class;
 }
